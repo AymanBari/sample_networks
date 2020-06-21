@@ -49,8 +49,23 @@ social_net_d3 <- forceNetwork(Links = links, Nodes = nodes,
              charge = -500,
              opacityNoHover = 1, 
              colourScale = ColourScale, 
-             legend = TRUE
-             ) 
+             legend = TRUE) 
 
 show(social_net_d3)
+
+
+########## LES MIS. NETWORK - EXAMPLE ##########
+data("MisLinks")
+data("MisNodes")
+
+forceNetwork(Links = MisLinks, 
+             Nodes = MisNodes, 
+             Source = "source", 
+             Target = "target", 
+             NodeID = "name", 
+             Group = "group", 
+             zoom = TRUE, 
+             linkColour = "black", 
+             charge = -20, 
+             opacityNoHover = 1)
 
