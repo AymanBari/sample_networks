@@ -11,17 +11,10 @@
 library(igraph)     # Converting dataframes to graph objects 
 library(tidyverse)  # Standard - dplyr, tibble, 
 library(networkD3)  # Plotting networks (interactive) 
-library(ggraph)     # Plot tbl_graph objects 
-library(tidygraph)  # as_tbl_graph -> convert data frames to table graph objects 
-library(babynames)  # For a list of unique names to add to a social graph 
 
 
 ########## FUNCTIONS ########## 
-get_random_names <- function(n) { 
-  index <- sample(1:nrow(babynames), n, replace = FALSE) 
-  names <- babynames[index, ] 
-  names 
-} 
+source("sample_network_src.R")
 
 
 ########## CREATE A SOCIAL NETWORK WITH 9 PEOPLE ##########

@@ -8,27 +8,31 @@
 
 
 ##### LOAD LIBRARIES ##### 
-library(tidyverse)  # Standard - dplyr, tibble, etc. 
-library(tidygraph)  # create tbl_graph objects 
-library(ggraph)     # Plot tbl_graph objects 
-library(igraph)     # Convert tbl_graph object to adjacency matrix 
-library(babynames)  # For a list of unique names to add to a social graph 
+library(tidyverse)    # Standard - dplyr, tibble, etc. 
+library(tidygraph)    # create tbl_graph objects 
+library(ggraph)       # Plot tbl_graph objects 
+library(igraph)       # Convert tbl_graph object to adjacency matrix 
+library(DataCombine)  # FindReplace(), index to names to print links df
+
+
+########## FUNCTIONS ########## 
+source("sample_network_src.R")
 
 
 ########## CREATE A SOCIAL NETWORK WITH 9 PEOPLE ########## 
-# Create nodes data frame - get random names from 
+# Create nodes df - get random names from 
 nodes <- get_random_names(9) 
 
-# Create links data frame - source and target nodes
+# Create links df - source and target nodes
 src <- sample(1:nrow(nodes), nrow(nodes)*2, replace = TRUE)     # set random source nodes vector 
 target <- sample(1:nrow(nodes), nrow(nodes)*2, replace = TRUE)  # random target nodes vector 
-links <- data.frame(src, target) %>%                            # create links data frame 
+links <- data.frame(src, target) %>%                            # create links df 
   filter(!(src == target))                                      # remove links with same source & target 
 links <- unique(links[c("src", "target")])                      # remove duplicate edges 
 
 
 ########## CREATE A SOCIAL NETWORK WITH 9 PEOPLE ##########
-# Cast from data frame to table graph object 
+# Cast from df to table graph object 
 social_net_tbls <- tbl_graph(nodes = nodes, edges = links, directed = FALSE) 
 
 # Plot network 
@@ -65,3 +69,27 @@ social_net_link_attr <- ggraph(social_net_tbl_attrs, layout = "stress") +
 
 show(social_net_link_attr) 
 
+
+########## REPLACE INDECIES WITH NAMES IN LINKS DF ##########
+# This is for illustrative purposes only. 
+# In reality, the links df with index values only can be used to render the graph
+
+# Type cast from num. to char. - required for FindReplace()
+links_w_attr$src <- as.character(links_w_attr$src)
+links_w_attr$target <- as.character(links_w_attr$target)
+
+# Replace src index with names from nodes df in links df
+links_w_attr_names <- FindReplace(data = links_w_attr, 
+                              Var = "src", 
+                              replaceData = (nodes %>% mutate(index = 1:nrow(nodes))), 
+                              from = "index", 
+                              to = "name") 
+
+# Replace target index with names from nodes df in links df
+links_w_attr_names <- FindReplace(data = links_w_attr_names, 
+                                  Var = "target", 
+                                  replaceData = (nodes %>% mutate(index = 1:nrow(nodes))), 
+                                  from = "index", 
+                                  to = "name")  
+
+View(links_w_attr_names)
